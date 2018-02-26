@@ -275,4 +275,60 @@ describe('UnrulyAdapter', () => {
       })
     })
   })
+
+  describe('1.0', () => {
+    it('should expose Unruly Bidder code', () => {
+      expect(adapter.code).to.equal('unruly')
+    });
+
+    describe('isBidRequestValid', () => {
+      it('should be a function', () => {
+        expect(typeof adapter.isBidRequestValid).to.equal('function')
+      });
+
+      it('should return false if bid is falsey', () => {
+        expect(adapter.isBidRequestValid()).to.be.false;
+      })
+
+      it('should return true if bid.mediaType is "video"', () => {
+        const mockBid = { mediaType: 'video' }
+
+        expect(adapter.isBidRequestValid(mockBid)).to.be.true;
+      });
+
+      it('should return true if bid.mediaTypes.video.context is "outstream"', () => {
+        const mockBid = {
+          mediaTypes: {
+            video: {
+              context: 'outstream'
+            }
+          }
+        };
+
+        expect(adapter.isBidRequestValid(mockBid)).to.be.true;
+      });
+    });
+
+    describe('buildRequests', () => {
+      it('should be a function', () => {
+        expect(typeof adapter.buildRequests).to.equal('function');
+      })
+      it('should return an object', () => {
+        const mockBidRequests = ['mockBid']
+        expect(typeof adapter.buildRequests(mockBidRequests)).to.equal('object')
+      })
+      it('should return a server request with a valid exchange url', () => {
+        const mockBidRequests = ['mockBid']
+        expect(adapter.buildRequests(mockBidRequests).url).to.equal('https://targeting.unrulymedia.com/prebid')
+      })
+      it('should return a server request with method === POST', () => {
+        const mockBidRequests = ['mockBid']
+        expect(adapter.buildRequests(mockBidRequests).method).to.equal('POST');
+      })
+      it('should return a server request with valid payload', () => {
+        const mockBidRequests = ['mockBid']
+        expect(adapter.buildRequests(mockBidRequests).data).to.deep.equal({bidRequests: mockBidRequests})
+      })
+    });
+  });
 })

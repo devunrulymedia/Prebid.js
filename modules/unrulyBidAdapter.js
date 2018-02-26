@@ -106,6 +106,34 @@ function UnrulyAdapter() {
           withCredentials: true
         }
       )
+    },
+
+    code: 'unruly',
+
+    isBidRequestValid: function(bid) {
+      if (!bid) return false;
+
+      const videoMediaType = (bid.mediaTypes && bid.mediaTypes.video)
+        ? bid.mediaTypes.video
+        : null;
+
+      const context = (videoMediaType && videoMediaType.context)
+        ? videoMediaType.context
+        : null;
+
+      return bid.mediaType === 'video' || context === 'outstream';
+    },
+
+    buildRequests: function( validBidRequests ) {
+      const url = 'https://targeting.unrulymedia.com/prebid';
+      const method = 'POST';
+      const data = { bidRequests: validBidRequests };
+
+      return {
+        url,
+        method,
+        data,
+      };
     }
   }
 
