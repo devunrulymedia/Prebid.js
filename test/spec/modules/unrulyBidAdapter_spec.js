@@ -41,7 +41,7 @@ describe('UnrulyAdapter', () => {
     }
   }
 
-  function createOutStreamExchangeBid({ placementCode, statusCode = 1 }) {
+  function createOutStreamExchangeBid({ placementCode, statusCode = 1, bidId = 'foo'}) {
     return {
       'ext': {
         'statusCode': statusCode,
@@ -56,7 +56,7 @@ describe('UnrulyAdapter', () => {
       'bidderCode': 'unruly',
       'width': 323,
       'vastUrl': 'https://targeting.unrulymedia.com/in_article?uuid=74544e00-d43b-4f3a-a799-69d22ce979ce&supported_mime_type=application/javascript&supported_mime_type=video/mp4&tj=%7B%22site%22%3A%7B%22lang%22%3A%22en-GB%22%2C%22ref%22%3A%22%22%2C%22page%22%3A%22http%3A%2F%2Fdemo.unrulymedia.com%2FinArticle%2Finarticle_nypost_upbeat%2Ftravel_magazines.html%22%2C%22domain%22%3A%22demo.unrulymedia.com%22%7D%2C%22user%22%3A%7B%22profile%22%3A%7B%22quantcast%22%3A%7B%22segments%22%3A%5B%7B%22id%22%3A%22D%22%7D%2C%7B%22id%22%3A%22T%22%7D%5D%7D%7D%7D%7D&video_width=618&video_height=347',
-      'bidId': 'foo',
+      'bidId': bidId,
       'height': 323
     }
   }
@@ -328,6 +328,33 @@ describe('UnrulyAdapter', () => {
       it('should return a server request with valid payload', () => {
         const mockBidRequests = ['mockBid']
         expect(adapter.buildRequests(mockBidRequests).data).to.deep.equal({bidRequests: mockBidRequests})
+      })
+    });
+
+    describe.only('interpretResponse', () => {
+      it('should be a function', () => {
+        expect(typeof adapter.interpretResponse).to.equal('function');
+      });
+      it('should return empty array when serverResponse is undefined', () => {
+        expect(adapter.interpretResponse()).to.deep.equal([]);
+      });
+      it('should return empty array when  serverResponse has no bids', () => {
+        const mockServerResponse = { bids: []}
+        expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([])
+      });
+      it('should return array of bids when receive a successful response from server', () => {
+        const mockExchangeBid = createOutStreamExchangeBid({placementCode: 'video1', bidId: 'mockBidId'})
+        const mockServerResponse = {bids: [mockExchangeBid]}
+        expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([
+          {
+            requestId: 'mockBidId',
+            cpm: 20,
+            width: 323,
+            height: 323,
+            vast_url: 'https://targeting.unrulymedia.com/in_article?uuid=74544e00-d43b-4f3a-a799-69d22ce979ce&supported_mime_type=application/javascript&supported_mime_type=video/mp4&tj=%7B%22site%22%3A%7B%22lang%22%3A%22en-GB%22%2C%22ref%22%3A%22%22%2C%22page%22%3A%22http%3A%2F%2Fdemo.unrulymedia.com%2FinArticle%2Finarticle_nypost_upbeat%2Ftravel_magazines.html%22%2C%22domain%22%3A%22demo.unrulymedia.com%22%7D%2C%22user%22%3A%7B%22profile%22%3A%7B%22quantcast%22%3A%7B%22segments%22%3A%5B%7B%22id%22%3A%22D%22%7D%2C%7B%22id%22%3A%22T%22%7D%5D%7D%7D%7D%7D&video_width=618&video_height=347',
+            netRevenue: true
+          }
+        ])
       })
     });
   });

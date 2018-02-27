@@ -78,6 +78,17 @@ function createBidResponseHandler(bidRequestBids) {
 }
 
 function UnrulyAdapter() {
+  function createBids (bids) {
+    return bids.map(bid => ({
+      requestId: bid.bidId,
+      cpm: bid.cpm,
+      width: bid.width,
+      height: bid.height,
+      vast_url: bid.vastUrl,
+      netRevenue: true
+    }))
+  }
+
   const adapter = {
     exchangeUrl: 'https://targeting.unrulymedia.com/prebid',
     callBids({ bids: bidRequestBids }) {
@@ -124,7 +135,7 @@ function UnrulyAdapter() {
       return bid.mediaType === 'video' || context === 'outstream';
     },
 
-    buildRequests: function( validBidRequests ) {
+    buildRequests: function(validBidRequests) {
       const url = 'https://targeting.unrulymedia.com/prebid';
       const method = 'POST';
       const data = { bidRequests: validBidRequests };
@@ -134,6 +145,11 @@ function UnrulyAdapter() {
         method,
         data,
       };
+    },
+
+    interpretResponse: function(serverResponse) {
+      const isInvalidResponse = !serverResponse || !serverResponse.bids;
+      return isInvalidResponse ? [] : createBids(serverResponse.bids);
     }
   }
 
