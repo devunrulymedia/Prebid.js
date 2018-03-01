@@ -2,6 +2,7 @@
 import { expect } from 'chai'
 import * as utils from 'src/utils'
 import { STATUS } from 'src/constants'
+import { VIDEO } from 'src/mediaTypes'
 import { Renderer } from 'src/Renderer'
 import { adapter } from 'modules/unrulyBidAdapter'
 
@@ -58,6 +59,10 @@ describe('UnrulyAdapter', () => {
 
   it('should expose Unruly Bidder code', () => {
     expect(adapter.code).to.equal('unruly')
+  });
+
+  it('should contain the VIDEO mediaType', function () {
+    expect(adapter.supportedMediaTypes).to.deep.equal([ VIDEO ])
   });
 
   describe('isBidRequestValid', () => {

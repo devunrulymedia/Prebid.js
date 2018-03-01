@@ -1,6 +1,7 @@
 import * as utils from 'src/utils'
 import { Renderer } from 'src/Renderer'
 import { registerBidder } from 'src/adapters/bidderFactory'
+import { VIDEO } from 'src/mediaTypes'
 
 function configureUniversalTag (exchangeRenderer) {
   parent.window.unruly = parent.window.unruly || {};
@@ -58,7 +59,7 @@ const buildPrebidResponseAndInstallRenderer = bids =>
 
 export const adapter = {
   code: 'unruly',
-
+  supportedMediaTypes: [ VIDEO ],
   isBidRequestValid: function(bid) {
     if (!bid) return false;
 
