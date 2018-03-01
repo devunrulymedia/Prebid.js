@@ -3,13 +3,13 @@ import { Renderer } from 'src/Renderer'
 import { registerBidder } from 'src/adapters/bidderFactory'
 
 function configureUniversalTag (exchangeRenderer) {
-  parent.window.unruly = parent.window.unruly || {}
-  parent.window.unruly['native'] = parent.window.unruly['native'] || {}
+  parent.window.unruly = parent.window.unruly || {};
+  parent.window.unruly['native'] = parent.window.unruly['native'] || {};
   parent.window.unruly['native'].siteId = parent.window.unruly['native'].siteId || exchangeRenderer.siteId
 }
 
 function configureRendererQueue () {
-  parent.window.unruly['native'].prebid = parent.window.unruly['native'].prebid || {}
+  parent.window.unruly['native'].prebid = parent.window.unruly['native'].prebid || {};
   parent.window.unruly['native'].prebid.uq = parent.window.unruly['native'].prebid.uq || []
 }
 
@@ -30,16 +30,16 @@ const buildPrebidResponseAndInstallRenderer = bids =>
   bids
     .filter(serverBid => !!utils.deepAccess(serverBid, 'ext.renderer'))
     .map(serverBid => {
-      const exchangeRenderer = utils.deepAccess(serverBid, 'ext.renderer')
-      configureUniversalTag(exchangeRenderer)
-      configureRendererQueue()
+      const exchangeRenderer = utils.deepAccess(serverBid, 'ext.renderer');
+      configureUniversalTag(exchangeRenderer);
+      configureRendererQueue();
 
       const rendererInstance = Renderer.install(Object.assign({}, exchangeRenderer, { callback: () => {} }));
       return { rendererInstance, serverBid }
     })
     .map(
       ({rendererInstance, serverBid}) => {
-        const prebidBid = serverResponseToBid(serverBid)
+        const prebidBid = serverResponseToBid(serverBid);
 
         const rendererConfig = Object.assign(
           {},
@@ -50,7 +50,7 @@ const buildPrebidResponseAndInstallRenderer = bids =>
           }
         );
 
-        rendererInstance.setRender(() => { notifyRenderer(rendererConfig) })
+        rendererInstance.setRender(() => { notifyRenderer(rendererConfig) });
 
         return prebidBid
       }

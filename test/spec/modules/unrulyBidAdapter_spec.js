@@ -37,24 +37,24 @@ describe('UnrulyAdapter', () => {
     }
   }
 
-  let sandbox
-  let fakeRenderer
+  let sandbox;
+  let fakeRenderer;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create()
-    sandbox.stub(utils, 'logError')
-    sandbox.stub(Renderer, 'install')
+    sandbox = sinon.sandbox.create();
+    sandbox.stub(utils, 'logError');
+    sandbox.stub(Renderer, 'install');
 
     fakeRenderer = {
       setRender: sinon.stub()
-    }
+    };
     Renderer.install.returns(fakeRenderer)
   });
 
   afterEach(() => {
-    sandbox.restore()
+    sandbox.restore();
     delete parent.window.unruly
-  })
+  });
 
   it('should expose Unruly Bidder code', () => {
     expect(adapter.code).to.equal('unruly')
@@ -67,10 +67,10 @@ describe('UnrulyAdapter', () => {
 
     it('should return false if bid is falsey', () => {
       expect(adapter.isBidRequestValid()).to.be.false;
-    })
+    });
 
     it('should return true if bid.mediaType is "video"', () => {
-      const mockBid = { mediaType: 'video' }
+      const mockBid = { mediaType: 'video' };
 
       expect(adapter.isBidRequestValid(mockBid)).to.be.true;
     });
@@ -91,21 +91,21 @@ describe('UnrulyAdapter', () => {
   describe('buildRequests', () => {
     it('should be a function', () => {
       expect(typeof adapter.buildRequests).to.equal('function');
-    })
+    });
     it('should return an object', () => {
-      const mockBidRequests = ['mockBid']
+      const mockBidRequests = ['mockBid'];
       expect(typeof adapter.buildRequests(mockBidRequests)).to.equal('object')
-    })
+    });
     it('should return a server request with a valid exchange url', () => {
-      const mockBidRequests = ['mockBid']
+      const mockBidRequests = ['mockBid'];
       expect(adapter.buildRequests(mockBidRequests).url).to.equal('https://targeting.unrulymedia.com/prebid')
-    })
+    });
     it('should return a server request with method === POST', () => {
-      const mockBidRequests = ['mockBid']
+      const mockBidRequests = ['mockBid'];
       expect(adapter.buildRequests(mockBidRequests).method).to.equal('POST');
-    })
+    });
     it('should return a server request with valid payload', () => {
-      const mockBidRequests = ['mockBid']
+      const mockBidRequests = ['mockBid'];
       expect(adapter.buildRequests(mockBidRequests).data).to.deep.equal({bidRequests: mockBidRequests})
     })
   });
@@ -118,12 +118,12 @@ describe('UnrulyAdapter', () => {
       expect(adapter.interpretResponse()).to.deep.equal([]);
     });
     it('should return empty array when  serverResponse has no bids', () => {
-      const mockServerResponse = { bids: []}
+      const mockServerResponse = { bids: []};
       expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([])
     });
     it('should return array of bids when receive a successful response from server', () => {
-      const mockExchangeBid = createOutStreamExchangeBid({placementCode: 'video1', bidId: 'mockBidId'})
-      const mockServerResponse = {bids: [mockExchangeBid]}
+      const mockExchangeBid = createOutStreamExchangeBid({placementCode: 'video1', bidId: 'mockBidId'});
+      const mockServerResponse = {bids: [mockExchangeBid]};
       expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([
         {
           requestId: 'mockBidId',
@@ -134,7 +134,7 @@ describe('UnrulyAdapter', () => {
           netRevenue: true
         }
       ])
-    })
+    });
 
     it('should initialize and set the renderer', () => {
       expect(Renderer.install).not.to.have.been.called;
@@ -155,26 +155,26 @@ describe('UnrulyAdapter', () => {
 
       sinon.assert.calledOnce(fakeRenderer.setRender);
       sinon.assert.calledWithExactly(fakeRenderer.setRender, sinon.match.func)
-    })
+    });
 
     it('bid is placed on the bid queue when render is called', () => {
-      const exchangeBid = createOutStreamExchangeBid({ placementCode: 'video', vastUrl: 'value: vastUrl' })
+      const exchangeBid = createOutStreamExchangeBid({ placementCode: 'video', vastUrl: 'value: vastUrl' });
       const exchangeResponse = createExchangeResponse(exchangeBid);
 
-      adapter.interpretResponse(exchangeResponse)
+      adapter.interpretResponse(exchangeResponse);
 
-      sinon.assert.calledOnce(fakeRenderer.setRender)
-      fakeRenderer.setRender.firstCall.args[0]()
+      sinon.assert.calledOnce(fakeRenderer.setRender);
+      fakeRenderer.setRender.firstCall.args[0]();
 
       expect(window.top).to.have.deep.property('unruly.native.prebid.uq');
 
       const uq = window.top.unruly.native.prebid.uq;
-      const sentRendererConfig = uq[0][1]
+      const sentRendererConfig = uq[0][1];
 
-      expect(uq[0][0]).to.equal('render')
-      expect(sentRendererConfig.vastUrl).to.equal('value: vastUrl')
-      expect(sentRendererConfig.renderer).to.equal(fakeRenderer)
+      expect(uq[0][0]).to.equal('render');
+      expect(sentRendererConfig.vastUrl).to.equal('value: vastUrl');
+      expect(sentRendererConfig.renderer).to.equal(fakeRenderer);
       expect(sentRendererConfig.adUnitCode).to.equal('video')
     })
   });
-})
+});
