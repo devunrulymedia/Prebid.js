@@ -72,11 +72,13 @@ export const adapter = {
     const url = 'https://targeting.unrulymedia.com/prebid';
     const method = 'POST';
     const data = { bidRequests: validBidRequests };
+    const options = { contentType: 'application/json' };
 
     return {
       url,
       method,
       data,
+      options,
     };
   },
 

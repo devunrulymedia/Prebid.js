@@ -107,6 +107,12 @@ describe('UnrulyAdapter', () => {
       const mockBidRequests = ['mockBid'];
       expect(adapter.buildRequests(mockBidRequests).method).to.equal('POST');
     });
+    it('should ensure contentType is `application/json`', function () {
+      const mockBidRequests = ['mockBid'];
+      expect(adapter.buildRequests(mockBidRequests).options).to.deep.equal({
+        contentType: 'application/json'
+      });
+    });
     it('should return a server request with valid payload', () => {
       const mockBidRequests = ['mockBid'];
       expect(adapter.buildRequests(mockBidRequests).data).to.deep.equal({bidRequests: mockBidRequests})
