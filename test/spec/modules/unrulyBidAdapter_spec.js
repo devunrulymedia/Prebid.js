@@ -32,11 +32,9 @@ describe('UnrulyAdapter', () => {
     }
   }
 
-  function createExchangeResponse(...bids) {
-    return {
-      'bids': bids
-    }
-  }
+  const createExchangeResponse = (...bids) => ({
+    body: { bids }
+  });
 
   let sandbox;
   let fakeRenderer;
@@ -123,12 +121,12 @@ describe('UnrulyAdapter', () => {
       expect(adapter.interpretResponse()).to.deep.equal([]);
     });
     it('should return empty array when  serverResponse has no bids', () => {
-      const mockServerResponse = { bids: []};
+      const mockServerResponse = { body: { bids: [] } };
       expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([])
     });
     it('should return array of bids when receive a successful response from server', () => {
       const mockExchangeBid = createOutStreamExchangeBid({placementCode: 'video1', bidId: 'mockBidId'});
-      const mockServerResponse = {bids: [mockExchangeBid]};
+      const mockServerResponse = createExchangeResponse(mockExchangeBid);
       expect(adapter.interpretResponse(mockServerResponse)).to.deep.equal([
         {
           requestId: 'mockBidId',
@@ -148,7 +146,7 @@ describe('UnrulyAdapter', () => {
       const mockReturnedBid = createOutStreamExchangeBid({placementCode: 'video1', bidId: 'mockBidId'});
       const mockRenderer = { url: 'value: mockRendererURL' };
       mockReturnedBid.ext.renderer = mockRenderer;
-      const mockServerResponse = { bids: [mockReturnedBid] };
+      const mockServerResponse = createExchangeResponse(mockReturnedBid);
 
       adapter.interpretResponse(mockServerResponse);
 

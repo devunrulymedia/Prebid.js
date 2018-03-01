@@ -80,13 +80,14 @@ export const adapter = {
     };
   },
 
-  interpretResponse: function(serverResponse) {
+  interpretResponse: function(serverResponse = {}) {
+    const serverResponseBody = serverResponse.body;
     const noBidsResponse = [];
-    const isInvalidResponse = !serverResponse || !serverResponse.bids;
+    const isInvalidResponse = !serverResponseBody || !serverResponseBody.bids;
 
     return isInvalidResponse
       ? noBidsResponse
-      : buildPrebidResponseAndInstallRenderer(serverResponse.bids);
+      : buildPrebidResponseAndInstallRenderer(serverResponseBody.bids);
   }
 };
 
