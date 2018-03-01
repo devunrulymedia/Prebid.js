@@ -62,13 +62,7 @@ export const adapter = {
   isBidRequestValid: function(bid) {
     if (!bid) return false;
 
-    const videoMediaType = (bid.mediaTypes && bid.mediaTypes.video)
-      ? bid.mediaTypes.video
-      : null;
-
-    const context = (videoMediaType && videoMediaType.context)
-      ? videoMediaType.context
-      : null;
+    const context = utils.deepAccess(bid, 'mediaTypes.video.context');
 
     return bid.mediaType === 'video' || context === 'outstream';
   },
