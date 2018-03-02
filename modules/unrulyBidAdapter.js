@@ -18,13 +18,17 @@ function notifyRenderer (bidResponseBid) {
   parent.window.unruly['native'].prebid.uq.push(['render', bidResponseBid])
 }
 
-const serverResponseToBid = bid => ({
+const serverResponseToBid = (bid, rendererInstance) => ({
   requestId: bid.bidId,
   cpm: bid.cpm,
   width: bid.width,
   height: bid.height,
   vastUrl: bid.vastUrl,
-  netRevenue: true
+  netRevenue: true,
+  creativeId: bid.bidId,
+  ttl: 360,
+  currency: 'USD',
+  renderer: rendererInstance
 });
 
 const buildPrebidResponseAndInstallRenderer = bids =>
@@ -40,7 +44,7 @@ const buildPrebidResponseAndInstallRenderer = bids =>
     })
     .map(
       ({rendererInstance, serverBid}) => {
-        const prebidBid = serverResponseToBid(serverBid);
+        const prebidBid = serverResponseToBid(serverBid, rendererInstance);
 
         const rendererConfig = Object.assign(
           {},
