@@ -62,6 +62,25 @@ const buildPrebidResponseAndInstallRenderer = bids =>
       }
     );
 
+// mediaType: 'video-outstream'   <-- 0.34
+// and:
+
+// mediaTypes: {
+//   video: {
+//       context: "outstream"     <-- 0.34 AND 1.0
+//   },
+// },
+
+const prebidBidRequestToUnrulXBidRequest = bidRequest => Object.assign(
+  {},
+  bidRequest,
+  {
+    mediaType: 'video-outstream',
+    placementCode: bidRequest.adUnitCode, // our exchange expects a placemendCode prop
+    // on the bid request.
+  }
+)
+
 export const adapter = {
   code: 'unruly',
   supportedMediaTypes: [ VIDEO ],
@@ -76,7 +95,11 @@ export const adapter = {
   buildRequests: function(validBidRequests) {
     const url = 'https://targeting.unrulymedia.com/prebid';
     const method = 'POST';
-    const data = { bidRequests: validBidRequests };
+    const data = {
+      bidRequests: validBidRequests.map(
+        prebidBidRequestToUnrulXBidRequest
+      )
+    };
     const options = { contentType: 'application/json' };
 
     return {
