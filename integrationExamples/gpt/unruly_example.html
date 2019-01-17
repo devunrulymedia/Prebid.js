@@ -49,6 +49,9 @@
                 bidsBackHandler: sendAdserverRequest
             });
         pbjs.setConfig({
+          "currency": {
+            "adServerCurrency": "USD",
+          },
           userSync: {
             iframeEnabled: true,
             enabledBidders: ['unruly']
