@@ -115,8 +115,10 @@ describe('UnrulyAdapter', () => {
     });
     it('should return a server request with valid payload', () => {
       const mockBidRequests = ['mockBid'];
-      expect(adapter.buildRequests(mockBidRequests).data).to.deep.equal({bidRequests: mockBidRequests})
-    })
+      const mockBidderRequest = {bidderCode: 'mockBidder'};
+      expect(adapter.buildRequests(mockBidRequests, mockBidderRequest).data)
+        .to.deep.equal({bidRequests: mockBidRequests, bidderRequest: mockBidderRequest});
+    });
   });
 
   describe('interpretResponse', () => {
