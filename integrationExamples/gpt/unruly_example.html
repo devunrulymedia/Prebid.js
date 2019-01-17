@@ -48,11 +48,11 @@
           pbjs.requestBids({
                 bidsBackHandler: sendAdserverRequest
             });
-            pbjs.setConfig({
-                "currency": {
-                    "adServerCurrency": "USD",
-                }
-            });
+        pbjs.setConfig({
+          userSync: {
+            iframeEnabled: true,
+            enabledBidders: ['unruly']
+          }});
         });
 
         function sendAdserverRequest() {
